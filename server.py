@@ -56,5 +56,5 @@ while True:
     user.send("Welcome to IRC default Chat Room".encode("ascii"))
     relay_message(f"\n{user_name} has joined the IRC".encode("ascii"))
     # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
-    client_thread = threading.Thread(target=handle, args=(user,))
+    client_thread = threading.Thread(target=receive_message(), args=(user,))
     client_thread.start()
