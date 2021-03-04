@@ -45,16 +45,18 @@ while True:
     # ACCEPT NEW CLIENTS AND INCOMING DATA
     user, address = s.accept()
     print(f'Connected to {user} at {address}')
-    data = user.recv(1024)
+    ##########
+    # data = user.recv(1024)
+    ############
     # SAVE USER AS CONNECTED CLIENT
     client.append(user)
+    print("\nClient has been appended")
     # REQUEST NICK
-    user.send("Please send your nickname for the IRC")
-    user_name = client.recv(100).encode("ascii")
+    user.send("Please send your nickname for the IRC".encode("ascii"))
+    user_name = user.recv(100).decode("ascii")
     nick.append(user_name)
     # ANNOUNCE NEW USER IN CHAT ROOM
-    client.send("Welcome to IRC default Chat Room")
-    relay_message(f"{user_name} has joined the IRC")
+    user.send("Welcome to IRC default Chat Room".encode("ascii"))
+    relay_message(f"{user_name} has joined the IRC".encode("ascii"))
     # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
     threading.Thread(target=handle, args=(user,))
-
