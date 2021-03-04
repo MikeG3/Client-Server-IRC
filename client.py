@@ -1,4 +1,4 @@
-# Echo client program
+# CLIENT FOR CLIENT-SERVER IRC
 """
 CLIENT DESCRIPTION
 Client constructs socket and binds it to its IP ADDRESS and PORT
@@ -9,29 +9,40 @@ Client can send message to IRC Server
 """
 
 import socket
+import threading
+
+# VARIABLES FOR CLIENT IDENTIFICATION
 HOST = socket.gethostname()
 PORT = 4200
-
 # Get username for IRC
 print("Please enter the user name for this client")
 userName = input()
 
-
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST, PORT))
-    s.sendall(b'Hello, world')
-    data = s.recv(1024)
-print('Received', repr(data))
+# CREATE SOCKET AND CONNECT IT TO THE IRC SERVER
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect((HOST, PORT))
 
 
-"""
-# Create socket
-a = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# Connect to server, with host-IP at Port 4200
-a.connect((socket.gethostname(), PORT))
+def receive_message():
+    while True:
+        message = s.recv(5000).decode("ascii")
+        if message == "Please send your nickname for the IRC":
+            s.send(userName.encode("ascii"))
+            print(f"\nYour nickname {userName} has been registered with IRC\nYou are now welcome to chat")
+        else:
+            print(message)
 
-# Receive and print message (max size)
-message = a.recv(512)
-print(message.decode("utf-8"))
-"""
 
+def send_message():
+    while True:
+        message = {input("")}
+        s.send(message.encode("ascii"))
+
+
+# CREATE 2 THREADS, FOR MULTI-TASKING: 1 FOR SENDING MESSAGES AND 1 FOR RECEIVING MESSAGES
+receive_message_thread = threading.Thread(target=receive_message())
+send_message_thread = threading.Thread(target=send_message())
+
+# RUN BOTH THREADS
+receive_message_thread.start()
+send_message_thread.start()
