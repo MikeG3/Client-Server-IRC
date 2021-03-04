@@ -32,9 +32,9 @@ def relay_message(message):
 
 
 # RECEIVE MESSAGES
-def receive_message():
+def receive_message(sender):
     while True:
-        msg = client.recv(5000)
+        msg = sender.recv(5000)
         relay_message(msg)
 
 
@@ -56,5 +56,5 @@ while True:
     user.send("Welcome to IRC default Chat Room".encode("ascii"))
     relay_message(f"\n{user_name} has joined the IRC".encode("ascii"))
     # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
-    client_thread = threading.Thread(target=receive_message(), args=(user,))
+    client_thread = threading.Thread(target=receive_message(user), args=(user,))
     client_thread.start()
