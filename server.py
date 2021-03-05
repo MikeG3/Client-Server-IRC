@@ -23,6 +23,7 @@ nick = []
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
 s.listen(12)
+print(f"Server is actively listening to at port: {PORT}")
 
 
 # RELAY MESSAGES TO ALL CLIENTS
@@ -34,8 +35,8 @@ def relay_message(message):
 # RECEIVE MESSAGES
 def receive_message(sender):
     while True:
-        msg = sender.recv(5000)
-        relay_message(msg)
+        msg = sender.recv(5000).decode("ascii")
+        relay_message(msg.encode("ascii"))
 
 
 print("SERVER FOR IRC IS NOW ACTIVE\n")
@@ -44,7 +45,7 @@ print("SERVER FOR IRC IS NOW ACTIVE\n")
 while True:
     # ACCEPT NEW CLIENTS AND INCOMING DATA
     user, address = s.accept()
-    print(f'Connected to {user} at {address}')
+    print(f'Connected to {address}\n')
     # SAVE USER AS CONNECTED CLIENT
     client.append(user)
     print("\nClient has been appended")
@@ -56,5 +57,5 @@ while True:
     user.send("Welcome to IRC default Chat Room".encode("ascii"))
     relay_message(f"\n{user_name} has joined the IRC".encode("ascii"))
     # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
-    client_thread = threading.Thread(target=receive_message(user), args=(user,))
+    client_thread = threading.Thread(target=receive_message, args=(user,))
     client_thread.start()
