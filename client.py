@@ -18,9 +18,12 @@ PORT = 4200
 print("Please enter the user name for this client")
 userName = input()
 
+print(f"\nyour userName is {userName}")
+
 # CREATE SOCKET AND CONNECT IT TO THE IRC SERVER
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
+print(f"\nA socket has been created and connected to the IRC Server")
 
 
 def receive_message():
@@ -35,14 +38,15 @@ def receive_message():
 
 def send_message():
     while True:
-        message = {input("")}
+        message = userName + ": " + input()
         s.send(message.encode("ascii"))
 
 
 # CREATE 2 THREADS, FOR MULTI-TASKING: 1 FOR SENDING MESSAGES AND 1 FOR RECEIVING MESSAGES
-receive_message_thread = threading.Thread(target=receive_message())
-send_message_thread = threading.Thread(target=send_message())
+receive_message_thread = threading.Thread(target=receive_message)
+send_message_thread = threading.Thread(target=send_message)
 
 # RUN BOTH THREADS
+print(f"\nNow running both threads {userName}")
 receive_message_thread.start()
 send_message_thread.start()
