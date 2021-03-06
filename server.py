@@ -26,9 +26,17 @@ s.listen(12)
 print(f"Server is actively listening to at port: {PORT}")
 
 
+# VALIDATE USERNAME
+def valid_user_name(name):
+    if name in nick:
+        return False
+    return True
+
+
 # RELAY MESSAGES TO ALL CLIENTS
 def relay_message(message):
     for clients in client:
+        # SEND MESSAGE TO ALL CLIENTS
         clients.send(message)
 
 
@@ -39,9 +47,17 @@ def receive_message(sender):
         relay_message(msg.encode("ascii"))
 
 
-print("SERVER FOR IRC IS NOW ACTIVE\n")
+# CLOSE CLIENT CONNECTION
+def disconnect(user):
+    # remove user name and nick from lists
+    # code here
+    # disconnect
+    # close thread
+    print(f"{user} disconnected from the server")
+
 
 # IRC MAIN PROGRAM LOOP
+print("SERVER FOR IRC IS NOW ACTIVE\n")
 while True:
     # ACCEPT NEW CLIENTS AND INCOMING DATA
     user, address = s.accept()
@@ -52,10 +68,15 @@ while True:
     # REQUEST NICK
     user.send("Please send your nickname for the IRC".encode("ascii"))
     user_name = user.recv(100).decode("ascii")
-    nick.append(user_name)
-    # ANNOUNCE NEW USER IN CHAT ROOM
-    user.send("Welcome to IRC default Chat Room".encode("ascii"))
-    relay_message(f"\n{user_name} has joined the IRC".encode("ascii"))
-    # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
-    client_thread = threading.Thread(target=receive_message, args=(user,))
-    client_thread.start()
+    if valid_user_name(user_name):
+        nick.append(user_name)
+        # ANNOUNCE NEW USER IN CHAT ROOM
+        user.send("Welcome to IRC default Chat Room".encode("ascii"))
+        relay_message(f"\n{user_name} has joined the IRC".encode("ascii"))
+        # CREATE THREAD FOR EACH CLIENT IN ORDER TO HANDLE MULTIPLE CLIENTS
+        client_thread = threading.Thread(target=receive_message, args=(user,))
+        client_thread.start()
+    else:
+        user.send("The user name that you entered is already in use\n".encode("ascii"))
+        user.send("Please try a different username".encode("ascii"))
+        # DISCONNECT FROM SERVER
