@@ -20,3 +20,12 @@ March 6, 2021
 Assignment 2
 COMP 445
 Concordia University
+
+
+PROGRAM:
+Client - Server Chat room
+Clients can log in with a unique user name
+Clients can send messages that are relayed to other clients logged into the same chat room
+1 General Chat Room
+
+DESIGN DESCRIPTIOON
