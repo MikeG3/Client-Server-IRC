@@ -18,6 +18,8 @@ PORT = 4200
 # LIST OF CLIENT AND NICK'S
 client = []
 nick = []
+# LIST OF RESERVED COMMANDS THAT ARE NOT STRING LITERLAS FOR MESSAGES
+CLOSE = "#CLOSE"
 
 # CONSTRUCT SOCKET BINDED TO SERVER ADDRESS AND PORT, FOR 12 SERVICABLE CLIENTS
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,16 +46,21 @@ def relay_message(message):
 def receive_message(sender):
     while True:
         msg = sender.recv(5000).decode("ascii")
-        relay_message(msg.encode("ascii"))
+        # CHECK IF COMMAND
+        if msg != CLOSE:
+            relay_message(msg.encode("ascii"))
+        else:
+            disconnect(sender)
 
 
 # CLOSE CLIENT CONNECTION
-def disconnect(user):
+def disconnect(close_requester):
     # remove user name and nick from lists
     # code here
     # disconnect
+    close_requester.close()
     # close thread
-    print(f"{user} disconnected from the server")
+    print(f"{close_requester} disconnected from the server")
 
 
 # IRC MAIN PROGRAM LOOP
