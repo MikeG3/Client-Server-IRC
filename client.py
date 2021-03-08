@@ -10,10 +10,13 @@ Client can send message to IRC Server
 
 import socket
 import threading
+from banner import banner
 
 # VARIABLES FOR CLIENT IDENTIFICATION
 HOST = socket.gethostname()
 PORT = 4200
+# BANNER
+print(banner)
 # Get username for IRC
 print("Please enter the user name for this client")
 userName = input()
@@ -41,15 +44,20 @@ def receive_message():
 # WRITE MESSAGES
 def send_message():
     while True:
-        message = userName + ": " + input()
+        # message = userName + ": " + input()
+        message = input()
+        if message != "#CLOSE":
+            message = userName + ": " + message
+        else:
+            close_connection()
         # SEND MESSAGE TO SOCKET
         s.send(message.encode("ascii"))
 
 
 # DISCONNECT FROM SERVER
 def close_connection():
-    # code to disconnect
-    print("Disconnecting from server")
+    s.close()
+    print("Disconnected from server")
 
 
 # CREATE 2 THREADS, FOR MULTI-TASKING: 1 FOR SENDING MESSAGES AND 1 FOR RECEIVING MESSAGES
